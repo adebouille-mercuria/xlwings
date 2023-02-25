@@ -1,11 +1,12 @@
 import datetime as dt
+import time
 from pathlib import Path
 
 import custom_functions
 import jinja2
 import markupsafe
 from dateutil import tz
-from fastapi import Body, FastAPI, Request, status
+from fastapi import Body, FastAPI, Request, WebSocket, WebSocketDisconnect, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
@@ -18,6 +19,18 @@ import xlwings as xw
 app = FastAPI()
 
 this_dir = Path(__file__).resolve().parent
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    # https://stackoverflow.com/questions/67947099/send-receive-in-parallel-using-websockets-in-python-fastapi
+    await websocket.accept()
+    try:
+        while True:
+            # TODO: converters
+            await websocket.send_json([[time.time(), time.time()]])
+    except WebSocketDisconnect as e:
+        print(repr(e))
 
 
 @app.post("/hello")

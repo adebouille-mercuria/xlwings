@@ -240,6 +240,30 @@ def custom_functions_code(module):
            }
            return rawData.result;
          }
+
+         function clock(invocation) {
+             // https://stackoverflow.com/questions/22431751/websocket-how-to-automatically-reconnect-after-it-dies
+             let ws = new WebSocket('wss://127.0.0.1:8000/ws');
+
+             ws.onmessage = function(event) {
+                 invocation.setResult(JSON.parse(event.data));
+             };
+
+             ws.onclose = function(e) {
+               console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+               invocation.setResult([["Connecting..."]]);
+               setTimeout(function() {
+                 clock(invocation);
+               }, 1000);
+             };
+
+             ws.onerror = function(error) {
+                 console.log(error.message);
+                 invocation.setResult([[error.message]]);
+                 ws.close();
+             };
+         }
+         CustomFunctions.associate("CLOCK", clock);
     """.replace(
         "xlwings_version", __version__
     )  # format string would require to double all curly braces
@@ -250,7 +274,7 @@ def custom_functions_code(module):
             func_name = xlfunc["name"]
             js += dedent(
                 f"""\
-            async function {func_name}() {{
+            async function {func_name}2() {{
                 args = ["{func_name}"]
                 args.push.apply(args, arguments);
                 return await base.apply(null, args);
@@ -274,8 +298,10 @@ def custom_functions_meta(module):
             else:
                 func["name"] = xlfunc["name"].upper()
             func["options"] = {
-                "requiresAddress": True,
-                "requiresParameterAddresses": True,
+                # stream can't be combined with those
+                # "requiresAddress": True,
+                # "requiresParameterAddresses": True,
+                "stream": True,
             }
             if xlfunc["volatile"]:
                 func["options"]["volatile"] = True

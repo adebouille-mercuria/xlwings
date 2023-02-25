@@ -16,3 +16,9 @@ def add(first, second, third=None):
 @pro.func
 async def add2(first, second):
     return first + second
+
+
+@pro.func
+async def clock():
+    # Dummy for JSON
+    return None
