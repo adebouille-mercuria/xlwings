@@ -473,3 +473,11 @@ Function GetAzureAdAccessToken( _
         #End If
     End If
 End Function
+
+Function NewDictionary(ParamArray Args()) As Dictionary
+  Dim I As Integer
+  Set NewDictionary = New Dictionary
+  For I = 0 To UBound(Args) Step 2
+    NewDictionary.Add Args(I), Args(I + 1)
+  Next I
+End Function

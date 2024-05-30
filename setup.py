@@ -16,6 +16,7 @@ with open(os.path.join(os.path.dirname(__file__), "README.rst")) as f:
 # Version Number
 with open(os.path.join(os.path.dirname(__file__), "xlwings", "__init__.py")) as f:
     version = re.compile(r'.*__version__ = "(.*?)"', re.S).match(f.read()).group(1)
+    # version = "0.31.1"
 
 # Dependencies
 data_files = []

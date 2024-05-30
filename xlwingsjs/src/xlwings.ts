@@ -9,7 +9,7 @@ export { getAccessToken };
 import { getActiveBookName } from "./utils";
 export { getActiveBookName };
 
-const version = "dev";
+const version = "0.0.1";
 globalThis.callbacks = {};
 export async function runPython(
   url = "",
